@@ -1,5 +1,6 @@
 #include <iostream>
 #include <limits>
+#include "Data.h"
 
 using namespace std;
 
@@ -19,16 +20,85 @@ int getValidNumber(int min, int max) {
   return num;
 }
 
+void loadData(std::vector<Instance *> &);
+
 int main() {
+  int input, numFeatures;
+  std::vector<Instance * > data = {};
+
   cout << "Welcome to CS170 Feature Selection Algorithm.\n";
 
-  cout << "Please enter total number of features:\n";
-  int number_of_features = getValidNumber(1, numeric_limits<int>::max());
+  // cout << "Please enter total number of features:\n";
+  // int number_of_features = getValidNumber(1, numeric_limits<int>::max());
 
-  cout << "Type the number of the algorithm you want to run.\n 1. Forward Selection\n 2. Backward Elimination\n 3. Bertie’s Special Algorithm.\n";
+  cout << "Select a dataset to test:" << endl;
+  cout << "1 - Small Dataset" << endl;
+  cout << "2 - Large Dataset" << endl;
+
+  input = getValidNumber(1, 1000);
+
+  if (input == 1) {
+    loadData(data, "test_data/small-test-dataset.txt", 10); 
+    
+  }
+  else if (input == 2) {
+    loadData(data, "test_data/large-test-dataset.txt", 40);
+  }
+
+  // output data
+  // for (auto instance : data->instances)
+  // {
+  //   cout << instance->getClass() << ' ';
+  //   std::vector<double> instances = instance->_features;
+  //   for (auto output : instances)
+  //   {
+  //     cout << output << ' ';
+  //   }
+  //   cout << endl;
+  // }
+
+  cout << "Type the number of the algorithm you want to run.\n1. Forward Selection\n2. Backward Elimination\n3. Our Special Algorithm.\n";
   int algo_num = getValidNumber(1, 3);
 
-cout <<"Number of Features: " <<number_of_features <<" Type of Algorithm: " <<algo_num <<endl;
+  if (algo_num == 1) {
+    
+  }
+
   
   return 0;
+}
+
+void loadData(std::vector<Instance* > &data, std::string filename, int numFeatures) {
+  std::ifstream inFile;
+  inFile.open(filename);
+  int instanceID = 0;
+  std::vector<double> featureList;
+  double classLabel, feature;
+
+  if (inFile.is_open())
+  {
+
+    std::string streamString;
+
+    while (getline(inFile, streamString))
+    {
+      std::stringstream inputStream(streamString);
+      inputStream >> classLabel;
+
+      for (int i = 0; i < numFeatures; i++)
+      {
+        inputStream >> feature;
+        featureList.push_back(feature);
+      }
+
+      Instance *addData = new Instance(instanceID, classLabel, featureList);
+      data.push_back(addData);
+      featureList = {};
+    }
+  }
+  else
+  {
+    std::cout << "Error opening file." << std::endl;
+    return;
+  }
 }
