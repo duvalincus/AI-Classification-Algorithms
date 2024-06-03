@@ -16,7 +16,6 @@ class Classifier {
       data = temp;
     };
     double Test(Instance testInstance);
-    double getEuclidianDistance(Instance testInstance);
     Classifier(std::vector<Instance*> data) : data(data) {};
 };
 
@@ -34,14 +33,14 @@ public:
       instance->_features = newFeatureList;
     }
   }
-  double checkAccuracy(std::vector<Instance*> data, Classifier classifier) {
+  double evaluate(std::vector<Instance*> data, Classifier classifier) {
     for (auto testInstance : data) {
       for (auto instance : data) {
         if (instance == testInstance) {
           continue;
         }
         else {
-          
+
         }
       }
     }

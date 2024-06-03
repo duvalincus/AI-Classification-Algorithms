@@ -37,7 +37,7 @@ int main() {
   if (algo_num == 1) {
     Classifier forwardSelection(data);
     Validator validate(data, {3,5,7});
-    validate.checkAccuracy();
+    validate.evaluate();
   }
 
   
