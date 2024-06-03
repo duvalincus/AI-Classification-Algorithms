@@ -1,24 +1,11 @@
 #include <iostream>
 #include <limits>
 #include "Data.h"
+#include "Classifier.h"
 
 using namespace std;
 
-int getValidNumber(int min, int max) {
-  int num = 0;
-  while (true) {
-    cin >> num;
-
-    if (cin.fail() || num < min || num > max) {
-      cout << "Invalid input, please enter a number between " << min << " and " << max << ".\n";
-      cin.clear();
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    } else {
-      break;
-    }
-  }
-  return num;
-}
+int getValidNumber(int min, int max);
 
 void loadData(std::vector<Instance *> &);
 
@@ -38,30 +25,19 @@ int main() {
   input = getValidNumber(1, 1000);
 
   if (input == 1) {
-    loadData(data, "test_data/small-test-dataset.txt", 10); 
-    
+    loadData(data, "test_data/small-test-dataset.txt", 10);
   }
   else if (input == 2) {
     loadData(data, "test_data/large-test-dataset.txt", 40);
   }
 
-  // output data
-  // for (auto instance : data->instances)
-  // {
-  //   cout << instance->getClass() << ' ';
-  //   std::vector<double> instances = instance->_features;
-  //   for (auto output : instances)
-  //   {
-  //     cout << output << ' ';
-  //   }
-  //   cout << endl;
-  // }
-
   cout << "Type the number of the algorithm you want to run.\n1. Forward Selection\n2. Backward Elimination\n3. Our Special Algorithm.\n";
   int algo_num = getValidNumber(1, 3);
 
   if (algo_num == 1) {
-    
+    Classifier forwardSelection(data);
+    Validator validate(data, {3,5,7});
+    validate.checkAccuracy();
   }
 
   
@@ -101,4 +77,24 @@ void loadData(std::vector<Instance* > &data, std::string filename, int numFeatur
     std::cout << "Error opening file." << std::endl;
     return;
   }
+}
+
+int getValidNumber(int min, int max) {
+  int num = 0;
+  while (true)
+  {
+    cin >> num;
+
+    if (cin.fail() || num < min || num > max)
+    {
+      cout << "Invalid input, please enter a number between " << min << " and " << max << ".\n";
+      cin.clear();
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    else
+    {
+      break;
+    }
+  }
+  return num;
 }

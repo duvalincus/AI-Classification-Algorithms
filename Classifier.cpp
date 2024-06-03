@@ -1,24 +1,21 @@
 #include "Classifier.h"
 using namespace std;
 
-double Classifier::getEuclidianDistance() {
-  double distance = 0;
+double Classifier::getEuclidianDistance(Instance test) {
+  double distance, closestClass;
+  double minDistance = std::numeric_limits<double>::max();
+  
   for (auto instance : data->_instances) {
-    for(auto feature : instance->_features) {
-
+    double sum = 0;
+    for(int i = 0; i < test._features.size(); i++) {
+      sum += pow(test._features[i] - instance->_features[i], 2); 
+    }
+    distance = sqrt(sum);
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestClass = instance->getClass();
     }
   }
-  return distance;
+  return closestClass;
 }
 
-void Classifier::Validator(std::vector<int> &features) {
-  double tempFeature;
-
-  for (auto instance : data->_instances) {
-    std::vector<double> tempFeatureList = {};
-    for (auto feature : features) {
-      tempFeature = instance->_features[feature];
-      tempFeatureList.push_back(tempFeature);
-    }
-  }
-}

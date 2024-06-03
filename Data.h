@@ -26,18 +26,3 @@ class Instance {
     }
 };
 
-class Data {
-  public:
-    int _numFeatures;
-    std::vector<Instance*> _instances;
-
-    Data(std::string filename, int numFeatures);
-    Data(std::vector<Instance*> instances, int numFeatures) {
-      _instances = instances;
-      _numFeatures = numFeatures;
-      normalize();
-    }
-    
-    void normalize();
-};
-
