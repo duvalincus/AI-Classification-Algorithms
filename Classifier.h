@@ -33,14 +33,16 @@ public:
       instance->_features = newFeatureList;
     }
   }
-  double evaluate(std::vector<Instance*> data, Classifier classifier) {
+  double evaluate(std::vector<Instance*> &data, Classifier classifier) {
+    int correctCount = 0;
     for (auto testInstance : data) {
+      std::vector<Instance*> temp = data;
       for (auto instance : data) {
         if (instance == testInstance) {
           continue;
         }
         else {
-
+          correctCount += (testInstance->getClass() == classifier.Test(*testInstance)); 
         }
       }
     }

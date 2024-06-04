@@ -36,6 +36,7 @@ int main() {
 
   if (algo_num == 1) {
     Classifier forwardSelection(data);
+    // do forward selection on the entire data set
     Validator validate(data, {3,5,7});
     validate.evaluate();
   }
