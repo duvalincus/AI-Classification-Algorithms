@@ -50,16 +50,31 @@ int main() {
   cout << "Type the number of the algorithm you want to run.\n1. Forward Selection\n2. Backward Elimination\n";
   int algo_num = getValidNumber(1, 2);
 
-  if (algo_num == 1) {
-  srand(time(0)); // Use current time as seed for random generator
 
+  vector<int> num_features = {};     //feature counter
 
-  vector<int> num_features = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};     //feature counter
+if (input == 1) {
+    for (int i = 1; i <= 10; ++i) {
+      num_features.push_back(i);
+    }
+}
+
+if (input == 2) {
+    for (int i = 1; i <= 40; ++i) {
+      num_features.push_back(i);
+    }
+}
   vector<double> current_percentage = {};                         //calculated percentage
   vector<int> explored_features = {};
 
   double max_percentage = 0.0; // Initialize max percentage
   vector<int> max_features;    // Initialize max features vector
+
+
+
+  if (algo_num == 1) {
+  srand(time(0)); // Use current time as seed for random generator
+
 
     while (!num_features.empty()) {
       current_percentage.clear();
@@ -127,13 +142,61 @@ int main() {
            << endl;
     }
   }
-//2 has what was in 1 before part 1 was added
     if (algo_num == 2) {
-    Classifier forwardSelection(data);
-    // do forward selection on the entire data set
-    Validator validate(data, {3,5,7});
-    //validate.evaluate();
-  }
+    while (!num_features.empty()) {
+        current_percentage.clear();
+        vector<int> current_features = num_features;
+        for (int i = 0; i < num_features.size(); i++) {
+            current_features.erase(current_features.begin() + i);
+            double percentage = randomPercentage(); // EVAL FUNCTION
+            current_percentage.push_back(percentage);
+            cout << "Using feature(s) {";
+            for (int j = 0; j < current_features.size(); ++j) {
+                cout << current_features[j];
+                if (j != current_features.size() - 1) {
+                    cout << ", ";
+                }
+            }
+            cout << "} accuracy is " << percentage << "%" << endl;
+            current_features = num_features; // Reset the features for the next iteration
+        }
+        // Calculate the best percentage
+        auto maxElementIter = max_element(current_percentage.begin(), current_percentage.end());
+        int position = distance(current_percentage.begin(), maxElementIter);
+        if (explored_features.empty()) {
+            cout << "Beginning search.\n";
+        }
+        // If there is not a new max percentage, stop the loop
+        if (*maxElementIter <= max_percentage) {
+            cout << "No new max percentage found. Stopping search.\n";
+            cout << "Max percentage: " << max_percentage << "%\n";
+            cout << "Max percentage was achieved with the following features: {";
+            for (int i = 0; i < max_features.size(); ++i) {
+                cout << max_features[i];
+                if (i != max_features.size() - 1) {
+                    cout << ", ";
+                }
+            }
+            cout << "}\n";
+            break;
+        }
+        // Update max percentage and max features
+        max_percentage = *maxElementIter;
+        max_features = num_features;
+        max_features.erase(max_features.begin() + position);
+        // Remove the feature with the worst impact on accuracy
+        num_features.erase(num_features.begin() + position);
+        cout << "Feature set {";
+        for (int i = 0; i < num_features.size(); ++i) {
+            cout << num_features[i];
+            if (i != num_features.size() - 1) {
+                cout << ", ";
+            }
+        }
+        cout << "} was best, accuracy is " << current_percentage[position] << "%" << endl;
+    }
+}
+
   return 0;
 }
 
