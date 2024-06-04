@@ -2,12 +2,26 @@
 #include <limits>
 #include "Data.h"
 #include "Classifier.h"
+#include <algorithm>
+#include <cstdlib>
+#include <ctime>
+#include <iomanip>
+#include <vector>
 
 using namespace std;
 
 int getValidNumber(int min, int max);
 
-void loadData(std::vector<Instance *> &);
+void loadData(std::vector<Instance* > &data, std::string filename, int numFeatures);
+
+double randomPercentage() {
+  int integerPart = rand() % 100; // Generate a random integer between 0 and 99
+  int decimalPart = rand() % 100; // Generate a random integer between 0 and 99
+  double percentage =
+      integerPart +
+      (double)decimalPart / 100; // Combine the integer and decimal parts
+  return percentage;
+}
 
 int main() {
   int input, numFeatures;
@@ -22,7 +36,7 @@ int main() {
   cout << "1 - Small Dataset" << endl;
   cout << "2 - Large Dataset" << endl;
 
-  input = getValidNumber(1, 1000);
+  input = getValidNumber(1, 2);
 
   if (input == 1) {
     loadData(data, "test_data/small-test-dataset.txt", 10);
@@ -31,17 +45,93 @@ int main() {
     loadData(data, "test_data/large-test-dataset.txt", 40);
   }
 
-  cout << "Type the number of the algorithm you want to run.\n1. Forward Selection\n2. Backward Elimination\n3. Our Special Algorithm.\n";
-  int algo_num = getValidNumber(1, 3);
+  cout << "Type the number of the algorithm you want to run.\n1. Forward Selection\n2. Backward Elimination\n";
+  int algo_num = getValidNumber(1, 2);
 
   if (algo_num == 1) {
+  srand(time(0)); // Use current time as seed for random generator
+
+
+  vector<int> num_features = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};     //feature counter
+  vector<double> current_percentage = {};                         //calculated percentage
+  vector<int> explored_features = {};
+
+  double max_percentage = 0.0; // Initialize max percentage
+  vector<int> max_features;    // Initialize max features vector
+
+    while (!num_features.empty()) {
+      current_percentage.clear();
+      for (int i = 0; i < num_features.size(); i++) {
+        double percentage = randomPercentage(); // EVAL FUNCTION
+        current_percentage.push_back(percentage);
+        cout << "Using feature(s) {";
+
+        for (int i = 0; i < explored_features.size(); ++i) {
+          cout << explored_features[i];
+          if (i != explored_features.size() - 1) {
+            cout << ", ";
+          }
+        }
+        if (!explored_features.empty()) {
+          cout << ", ";
+        }
+
+        cout << num_features[i] << "} accuracy is " << percentage << "%"
+             << endl;
+      }
+      // Calculate the best percentage
+      auto maxElementIter =
+          max_element(current_percentage.begin(), current_percentage.end());
+      int position = distance(current_percentage.begin(), maxElementIter);
+      if (explored_features.empty()) {
+        cout << "Beginning search.\n";
+      }
+
+      // If there is not a new max percentage, stop the loop
+      if (*maxElementIter <= max_percentage) {
+        cout << "No new max percentage found. Stopping search.\n";
+        cout << "Max percentage: " << max_percentage << "%\n";
+        cout << "Max percentage was achieved with the following features: {";
+        for (int i = 0; i < max_features.size(); ++i) {
+          cout << max_features[i];
+          if (i != max_features.size() - 1) {
+            cout << ", ";
+          }
+        }
+        cout << "}\n";
+        break;
+      }
+
+      // Update max percentage and max features
+      max_percentage = *maxElementIter;
+      max_features = explored_features;
+      max_features.push_back(num_features[position]);
+
+      // Move the best feature to explored_features and remove it from
+      // num_features
+      explored_features.push_back(num_features[position]);
+      num_features.erase(num_features.begin() + position);
+
+      cout << "Feature set {";
+
+      for (int i = 0; i < explored_features.size(); ++i) {
+        cout << explored_features[i];
+        if (i != explored_features.size() - 1) {
+          cout << ", ";
+        }
+      }
+
+      cout << "} was best, accuracy is " << current_percentage[position] << "%"
+           << endl;
+    }
+  }
+//2 has what was in 1 before part 1 was added
+    if (algo_num == 2) {
     Classifier forwardSelection(data);
     // do forward selection on the entire data set
     Validator validate(data, {3,5,7});
-    validate.evaluate();
+    //validate.evaluate();
   }
-
-  
   return 0;
 }
 
