@@ -1,3 +1,4 @@
+#pragma once
 #include "Data.h"
 #include <vector>
 #include <algorithm>
@@ -5,23 +6,18 @@
 class Classifier {
   public:
     std::vector<Instance*> data = {};
-    void Train(std::vector<int> IDs) {
-      std::vector<Instance* > temp = {};
-      for (auto instance : data) {
-        auto it = std::find(IDs.begin(), IDs.end(), instance->getID());
-        if (it != IDs.end()) {
-          temp.push_back(instance);
-        }
-      }
-      data = temp;
+    void Train(std::vector<Instance*> & trainingInstances) {
+      
+      data = trainingInstances;
+
     };
     double Test(Instance testInstance);
-    Classifier(std::vector<Instance*> data) : data(data) {};
+    Classifier(std::vector<Instance*> &data) : data(data) {};
 };
 
 class Validator {
 public:
-  Validator(std::vector<Instance *> data, std::vector<int> features) {
+  Validator(std::vector<Instance *> &data, std::vector<int> &features) {
 
     for (auto instance : data)
     {
@@ -33,18 +29,17 @@ public:
       instance->_features = newFeatureList;
     }
   }
+
+  // using leave one out validation, check the accuracy of this specific featureset
   double evaluate(std::vector<Instance*> &data, Classifier classifier) {
     int correctCount = 0;
-    for (auto testInstance : data) {
-      std::vector<Instance*> temp = data;
-      for (auto instance : data) {
-        if (instance == testInstance) {
-          continue;
-        }
-        else {
-          correctCount += (testInstance->getClass() == classifier.Test(*testInstance)); 
-        }
-      }
+    for (int i = 0; i < data.size(); i++) {
+      std::vector<Instance*> trainingData = data;
+      trainingData.erase(trainingData.begin() + i);
+      classifier.Train(trainingData);
+      correctCount += (data[i]->getClass() == classifier.Test(*data[i])); 
+      
     }
+    return correctCount / data.size();
   }
 };

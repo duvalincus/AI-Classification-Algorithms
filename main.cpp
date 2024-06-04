@@ -40,9 +40,11 @@ int main() {
 
   if (input == 1) {
     loadData(data, "test_data/small-test-dataset.txt", 10);
+    numFeatures = 10;
   }
   else if (input == 2) {
     loadData(data, "test_data/large-test-dataset.txt", 40);
+    numFeatures = 40;
   }
 
   cout << "Type the number of the algorithm you want to run.\n1. Forward Selection\n2. Backward Elimination\n";
