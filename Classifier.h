@@ -13,33 +13,39 @@ class Classifier {
     };
     double Test(Instance testInstance);
     Classifier(std::vector<Instance*> &data) : data(data) {};
+    Classifier() : data({}) {};
 };
 
-class Validator {
+class Validator : public Classifier {
 public:
-  Validator(std::vector<Instance *> &data, std::vector<int> &features) {
-
-    for (auto instance : data)
+  Validator(std::vector<Instance *> &data, std::vector<int> &features) : Classifier(data) {
+    std::vector<Instance *> tempData = data;
+    for (auto instance : tempData)
     {
       std::vector<double> newFeatureList = {};
       for (auto feature : features)
       {
-        newFeatureList.push_back(instance->_features[feature]);
+        newFeatureList.push_back(instance->_features[feature - 1]);
       }
       instance->_features = newFeatureList;
     }
+    this->data = tempData;
   }
 
   // using leave one out validation, check the accuracy of this specific featureset
-  double evaluate(std::vector<Instance*> &data, Classifier classifier) {
+  double evaluate(std::vector<Instance*> &data) {
     int correctCount = 0;
-    for (int i = 0; i < data.size(); i++) {
+    double num1 = 0.0;
+    double numInstances = data.size();
+
+    for (int i = 0; i < numInstances; i++) {
       std::vector<Instance*> trainingData = data;
       trainingData.erase(trainingData.begin() + i);
-      classifier.Train(trainingData);
-      correctCount += (data[i]->getClass() == classifier.Test(*data[i])); 
+      Train(trainingData);
+      correctCount += (data[i]->getClass() == Test(*data[i])); 
       
     }
-    return correctCount / data.size();
+    return (correctCount / numInstances) * 100;
   }
+
 };

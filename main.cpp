@@ -53,24 +53,15 @@ int main() {
 
   vector<int> num_features = {};     //feature counter
 
-if (input == 1) {
-    for (int i = 1; i <= 10; ++i) {
-      num_features.push_back(i);
-    }
-}
+  for (int i = 1; i <= numFeatures; ++i) {
+    num_features.push_back(i);
+  }
 
-if (input == 2) {
-    for (int i = 1; i <= 40; ++i) {
-      num_features.push_back(i);
-    }
-}
   vector<double> current_percentage = {};                         //calculated percentage
   vector<int> explored_features = {};
 
-  double max_percentage = 0.0; // Initialize max percentage
-  vector<int> max_features;    // Initialize max features vector
-
-
+  double max_percentage = 50.0; // Initialize max percentage
+  vector<int> max_features = {};    // Initialize max features vector
 
   if (algo_num == 1) {
   srand(time(0)); // Use current time as seed for random generator
@@ -79,7 +70,11 @@ if (input == 2) {
     while (!num_features.empty()) {
       current_percentage.clear();
       for (int i = 0; i < num_features.size(); i++) {
-        double percentage = randomPercentage(); // EVAL FUNCTION
+        // get vector with the features being looked at
+        std::vector<int> current_features = max_features;
+        current_features.push_back(num_features[i]);
+        Validator validator(data, current_features);
+        double percentage = validator.evaluate(data); // EVAL FUNCTION
         current_percentage.push_back(percentage);
         cout << "Using feature(s) {";
 
