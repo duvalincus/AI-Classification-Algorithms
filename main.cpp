@@ -14,14 +14,6 @@ int getValidNumber(int min, int max);
 
 void loadData(std::vector<Instance* > &data, std::string filename, int numFeatures);
 
-double randomPercentage() {
-  int integerPart = rand() % 100; // Generate a random integer between 0 and 99
-  int decimalPart = rand() % 100; // Generate a random integer between 0 and 99
-  double percentage =
-      integerPart +
-      (double)decimalPart / 100; // Combine the integer and decimal parts
-  return percentage;
-}
 
 int main() {
   int input, numFeatures;
@@ -64,8 +56,6 @@ int main() {
   vector<int> max_features = {};    // Initialize max features vector
 
   if (algo_num == 1) {
-  srand(time(0)); // Use current time as seed for random generator
-
 
     while (!num_features.empty()) {
       current_percentage.clear();
@@ -143,7 +133,8 @@ int main() {
         vector<int> current_features = num_features;
         for (int i = 0; i < num_features.size(); i++) {
             current_features.erase(current_features.begin() + i);
-            double percentage = randomPercentage(); // EVAL FUNCTION
+            Validator validator(data, current_features);
+            double percentage = validator.evaluate(data); // EVAL FUNCTION
             current_percentage.push_back(percentage);
             cout << "Using feature(s) {";
             for (int j = 0; j < current_features.size(); ++j) {
