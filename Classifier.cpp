@@ -1,21 +1,41 @@
 #include "Classifier.h"
 using namespace std;
 
-double Classifier::Test(Instance test) {
+// tests test instance against the trained data
+double Classifier::Test(const Instance &test) {
   double distance, closestClass;
-  double minDistance = std::numeric_limits<double>::max();
+  double minDistance = 1000;
   
-  for (auto instance : data) {
-    double sum = 0;
-    for(int i = 0; i < test._features.size(); i++) {
-      sum += pow(test._features[i] - instance->_features[i], 2); 
-    }
-    distance = sqrt(sum);
+  for (size_t i = 0; i < trainingData.size(); ++i) {
+    
+    distance = getEuclidianDistance(trainingData[i], test);
     if (distance < minDistance) {
       minDistance = distance;
-      closestClass = instance->getClass();
+      closestClass = trainingData[i].getClass();
     }
   }
   return closestClass;
 }
 
+double Classifier::getEuclidianDistance(const Instance &x, const Instance &y) {
+  double sum = 0.0;
+  for (size_t i = 0; i < x._features.size(); ++i)
+  {
+    sum += pow(x._features[i] - y._features[i], 2);
+  }
+  return sqrt(sum);
+}
+
+double Validator::evaluate() {
+  double correctCount = 0;
+  double numInstances = data.size();
+
+  for (size_t i = 0; i < numInstances; ++i)
+  {
+    std::vector<Instance> trainingData(data);
+    trainingData.erase(trainingData.begin() + i);
+    Train(trainingData);
+    correctCount += (data[i].getClass() == Test(data[i]));
+  }
+  return (correctCount / numInstances) * 100;
+}

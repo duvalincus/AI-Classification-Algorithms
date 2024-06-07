@@ -13,7 +13,7 @@ class Instance {
 
   public:
     std::vector <double> _features;
-    Instance(int instanceID, double classLabel, std::vector<double> &features) {
+    Instance(int instanceID, double classLabel, std::vector<double> features) {
       _instanceID = instanceID;
       _classLabel = classLabel;
       _features = features;

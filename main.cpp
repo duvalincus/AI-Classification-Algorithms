@@ -12,14 +12,14 @@
 using namespace std;
 
 int getValidNumber(int min, int max);
-void loadData(std::vector<Instance* > &data, std::string filename, int numFeatures);
-int getChoices(std::vector<Instance *> &data, int &numFeatures);
+void loadData(std::vector<Instance> &data, std::string filename, int numFeatures);
+int getChoices(std::vector<Instance> &data, int &numFeatures);
 
 int main() {
   int input, numFeatures;
-  std::vector<Instance * > data = {};
+  std::vector<Instance> inputData = {};
 
-  input = getChoices(data, numFeatures);
+  input = getChoices(inputData, numFeatures);
 
   vector<int> features = {};     //feature set
 
@@ -32,20 +32,22 @@ int main() {
     // Validator test(data, testFeatures);
     // test.evaluate(data);
 
-    // testFeatures = {5};
-    // Validator test2(data, testFeatures);
-    // test2.evaluate(data);
-    forwardSelection(data, numFeatures, features);
+    std::vector<int> testFeatures = {1};
+    Validator test2(inputData, testFeatures);
+    cout << "Test feature 5 gives " << test2.evaluate() << endl;
+    forwardSelection(inputData, numFeatures, features);
   }
     
   if (input == 2) {
-    backwardSelection(data, numFeatures, features);
+    backwardSelection(inputData, numFeatures, features);
   }
 
   return 0;
 }
 
-void loadData(std::vector<Instance* > &data, std::string filename, int numFeatures) {
+void loadData(std::vector<Instance> &data, std::string filename, int numFeatures) {
+
+
   std::ifstream inFile;
   inFile.open(filename);
   int instanceID = 0;
@@ -68,7 +70,7 @@ void loadData(std::vector<Instance* > &data, std::string filename, int numFeatur
         featureList.push_back(feature);
       }
 
-      Instance *addData = new Instance(++instanceID, classLabel, featureList);
+      Instance addData(++instanceID, classLabel, featureList);
       data.push_back(addData);
       featureList = {};
     }
@@ -84,25 +86,24 @@ void loadData(std::vector<Instance* > &data, std::string filename, int numFeatur
   for (int i = 0; i < numFeatures; i++)
   {
     double sum = 0.0;
-    for (auto instance : data)
+    for (size_t j = 0; j < data.size(); ++j)
     {
-      sum += instance->_features[i];
+      sum += data[j]._features[i];
     }
     average = sum / static_cast<double>(data.size());
     sum = 0.0;
-    for (auto instance : data)
+    for (size_t j = 0; j < data.size(); ++j)
     {
-      sum += pow((instance->_features[i] - average), 2);
+      sum += pow((data[j]._features[i] - average), 2);
     }
     stdev = sqrt(sum / static_cast<double>(data.size()));
 
-    // std::cout << "For feature " << i << " stdev is: " << stdev << std::endl;
-
-    for (auto instance : data)
+    for (size_t j = 0; j < data.size(); ++j)
     {
-      instance->_features[i] = (instance->_features[i] - average) / stdev;
+      data[j]._features[i] = (data[j]._features[i] - average) / stdev;
     }
   }
+  inFile.close();
 
   std::cout << "Data normalized." << std::endl;
 }
@@ -127,7 +128,7 @@ int getValidNumber(int min, int max) {
   return num;
 }
 
-int getChoices(std::vector<Instance*> &data, int &numFeatures) {
+int getChoices(std::vector<Instance> &data, int &numFeatures) {
   cout << "Welcome to CS170 Feature Selection Algorithm.\n";
 
   // cout << "Please enter total number of features:\n";

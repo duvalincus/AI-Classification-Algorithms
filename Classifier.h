@@ -5,45 +5,33 @@
 
 class Classifier {
   public:
-    std::vector<Instance*> data = {};
-    void Train(std::vector<Instance*> & trainingInstances) {
-      
-      data = trainingInstances;
-
+    std::vector<Instance> data = {};
+    std::vector<Instance> trainingData = {};
+    void Train(std::vector<Instance> trainingInstances) {
+      trainingData = trainingInstances;
     };
-    double Test(Instance testInstance);
-    Classifier(std::vector<Instance*> &data) : data(data) {};
+    double Test(const Instance &testInstance);
+    double getEuclidianDistance(const Instance &x, const Instance &y);
+    Classifier(std::vector<Instance> data) : data(data) {};
     Classifier() : data({}) {};
 };
 
 class Validator : public Classifier {
 public:
-  Validator(std::vector<Instance *> &data, std::vector<int> &features) : Classifier(data) {
-    std::vector<Instance *> tempData = data;
-    for (auto instance : tempData)
+  Validator(std::vector<Instance> data, std::vector<int> features) : Classifier(data) {
+    for (size_t i = 0; i < data.size(); ++i)
     {
       std::vector<double> newFeatureList = {};
-      for (auto feature : features)
+      for (size_t j = 0; j < features.size(); j++)
       {
-        newFeatureList.push_back(instance->_features[feature - 1]);
+        newFeatureList.push_back(data[i]._features[features[j] - 1]);
       }
-      instance->_features = newFeatureList;
+      data[i]._features = newFeatureList;
     }
-    this->data = tempData;
+    this->data = data;
   }
 
   // using leave one out validation, check the accuracy of this specific featureset
-  double evaluate(std::vector<Instance*> &data) {
-    double correctCount = 0;
-    double numInstances = data.size();
-
-    for (int i = 0; i < numInstances; i++) {
-      std::vector<Instance*> trainingData = data;
-      trainingData.erase(trainingData.begin() + i);
-      Train(trainingData);
-      correctCount += (data[i]->getClass() == Test(*data[i])); 
-    }
-    return (correctCount / numInstances) * 100;
-  }
+  double evaluate();
 
 };
