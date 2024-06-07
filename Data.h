@@ -1,5 +1,4 @@
-#ifndef DATA_H
-#define DATA_H
+#pragma once
 
 #include <vector>
 #include <iostream>
@@ -28,6 +27,3 @@ class Instance {
       return _classLabel;
     }
 };
-
-#endif // DATA_H
-

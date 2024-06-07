@@ -34,8 +34,7 @@ public:
 
   // using leave one out validation, check the accuracy of this specific featureset
   double evaluate(std::vector<Instance*> &data) {
-    int correctCount = 0;
-    double num1 = 0.0;
+    double correctCount = 0;
     double numInstances = data.size();
 
     for (int i = 0; i < numInstances; i++) {
@@ -43,7 +42,6 @@ public:
       trainingData.erase(trainingData.begin() + i);
       Train(trainingData);
       correctCount += (data[i]->getClass() == Test(*data[i])); 
-      
     }
     return (correctCount / numInstances) * 100;
   }
